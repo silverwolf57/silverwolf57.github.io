@@ -45,8 +45,10 @@
 /* Custom Image Icons for Netease and CSDN */
 .card-info-social-icons .fa-music::before,
 .card-info-social-icons .fa-code::before,
+.card-info-social-icons .wechat-oa::before,
 #site_social_icons .fa-music::before,
-#site_social_icons .fa-code::before {
+#site_social_icons .fa-code::before,
+#site_social_icons .wechat-oa::before {
     content: "" !important;
     display: inline-block !important;
     width: 1.2em !important;
