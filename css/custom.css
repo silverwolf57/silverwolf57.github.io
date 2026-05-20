@@ -41,3 +41,21 @@
 #aside-content .card-info-social-icons .social-icon:hover i {
     transform: rotate(360deg);
 }
+
+/* Custom Image Icons for Netease and CSDN */
+#aside-content .card-info-social-icons .fa-music::before {
+    content: "";
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    background: url('/img/netease.svg') no-repeat center center;
+    background-size: contain;
+}
+#aside-content .card-info-social-icons .fa-code::before {
+    content: "";
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    background: url('/img/csdn.svg') no-repeat center center;
+    background-size: contain;
+}
