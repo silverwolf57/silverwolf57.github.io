@@ -43,19 +43,24 @@
 }
 
 /* Custom Image Icons for Netease and CSDN */
-#aside-content .card-info-social-icons .fa-music::before {
-    content: "";
-    display: block;
-    width: 1.2em;
-    height: 1.2em;
-    background: url('/img/netease.svg') no-repeat center center;
-    background-size: contain;
+.card-info-social-icons .fa-music::before,
+.card-info-social-icons .fa-code::before,
+#site_social_icons .fa-music::before,
+#site_social_icons .fa-code::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 1.2em !important;
+    height: 1.2em !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    vertical-align: middle !important;
 }
-#aside-content .card-info-social-icons .fa-code::before {
-    content: "";
-    display: block;
-    width: 1.2em;
-    height: 1.2em;
-    background: url('/img/csdn.svg') no-repeat center center;
-    background-size: contain;
+.card-info-social-icons .fa-music::before,
+#site_social_icons .fa-music::before {
+    background-image: url('/img/netease.svg') !important;
+}
+.card-info-social-icons .fa-code::before,
+#site_social_icons .fa-code::before {
+    background-image: url('/img/csdn.svg') !important;
 }
