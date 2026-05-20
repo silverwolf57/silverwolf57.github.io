@@ -58,9 +58,9 @@
 }
 .card-info-social-icons .fa-music::before,
 #site_social_icons .fa-music::before {
-    background-image: url('/img/netease.svg') !important;
+    background-image: url('/img/netease.png') !important;
 }
 .card-info-social-icons .fa-code::before,
 #site_social_icons .fa-code::before {
-    background-image: url('/img/csdn.svg') !important;
+    background-image: url('/img/csdn.png') !important;
 }
