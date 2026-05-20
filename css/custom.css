@@ -64,3 +64,7 @@
 #site_social_icons .fa-code::before {
     background-image: url('/img/csdn.png') !important;
 }
+.card-info-social-icons .wechat-oa::before,
+#site_social_icons .wechat-oa::before {
+    background-image: url('/img/oa_icon.png') !important;
+}
