@@ -70,3 +70,19 @@
 #site_social_icons .wechat-oa::before {
     background-image: url('/img/oa_icon.png') !important;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(73, 177, 245, 0.6);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(73, 177, 245, 1);
+}
