@@ -86,3 +86,24 @@
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(73, 177, 245, 1);
 }
+
+/* Warp Speed Preloader */
+#warp-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.8s ease-in-out;
+}
+#warp-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
