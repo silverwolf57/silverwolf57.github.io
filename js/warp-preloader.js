@@ -16,8 +16,8 @@
   
   let w, h;
   let stars = [];
-  const STAR_COUNT = 1000; // Dense enough to match the image
-  
+  const STAR_COUNT = 2500; // Increased density
+
   let speed = 2; // Initial drift
   let targetSpeed = 35; // Warp speed
   
@@ -44,6 +44,9 @@
       
       // Individual length multiplier to create varied streak lengths (like the image)
       this.lengthMult = Math.random() * 2.0 + 0.5;
+      
+      // Assign a random hue for color
+      this.hue = Math.floor(Math.random() * 360);
     }
     
     update() {
@@ -72,7 +75,6 @@
       
       // Exponential brightness: stars fade out completely in the distance
       let brightness = Math.pow(depthRatio, 1.2);
-      let colorVal = Math.floor(brightness * 255);
       
       // Width gets thicker as it approaches the camera
       let lineWidth = brightness * 3.5 + 0.2;
@@ -87,8 +89,8 @@
       ctx.moveTo(tailX, tailY);
       ctx.lineTo(headX, headY);
       ctx.lineWidth = lineWidth;
-      // Pure greyscale colors as requested by the image style
-      ctx.strokeStyle = `rgb(${colorVal}, ${colorVal}, ${colorVal})`;
+      // Use HSL for vibrant colors. Fades to black in distance (0%), vibrant in mid (50%), white when close (100%)
+      ctx.strokeStyle = `hsl(${this.hue}, 90%, ${brightness * 100}%)`;
       ctx.lineCap = 'round'; // Makes the ends of the streaks smooth
       ctx.stroke();
     }
@@ -142,7 +144,7 @@
   
   animate();
   
-  const minDuration = 4000;
+  const minDuration = 6500; // Lengthened animation time
   
   function endPreloader() {
     window.preloaderExitSignal = true; 
