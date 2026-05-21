@@ -3,205 +3,245 @@
   if (!preloader) return;
 
   const canvas = document.getElementById('warp-canvas');
-  const ctx = canvas.getContext('2d');
+  // Initialize WebGL
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   
-  let w, h;
-  let particles = [];
-  const PARTICLE_COUNT = 3000;
+  if (!gl) {
+    console.warn("WebGL not supported, falling back.");
+    preloader.style.display = 'none';
+    return;
+  }
+
+  // --- Vertex Shader ---
+  // A simple shader that renders a full-screen quad
+  const vsSource = `
+    attribute vec2 a_position;
+    void main() {
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  // --- Fragment Shader ---
+  // Using the exact advanced shader logic provided by the user (with slight color tuning for Interstellar vibe)
+  const fsSource = `
+    precision highp float;
+    uniform vec2 iResolution;
+    uniform float iTime;
+    uniform float iFade; // Controls hyper-acceleration when exiting the preloader
+
+    // Pseudo-random hash for noise
+    float hash(vec2 p) {
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+    }
+
+    // Value Noise for nebula texture
+    float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f); // Smoothstep
+        
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        
+        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+    }
+
+    // Fractional Brownian Motion (fBm) for dense nebula clouds
+    float fbm(vec2 p) {
+        float v = 0.0;
+        float amp = 0.5;
+        for (int i = 0; i < 4; i++) {
+            v += amp * noise(p);
+            p *= 2.0;
+            amp *= 0.5;
+        }
+        return v;
+    }
+
+    void main() {
+        // 1. Normalize and center coordinates
+        vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution.xy) / iResolution.y;
+        
+        // 2. Convert to polar coordinates
+        float angle = atan(uv.y, uv.x);
+        float radius = length(uv);
+        
+        // Prevent division by zero
+        if (radius < 0.001) radius = 0.001;
+
+        // Dynamic time parameter (accelerates during exit sequence)
+        float t = iTime * (1.0 + iFade * 3.0);
+
+        // 3. Nebula Layer (Nebula background)
+        // Use 1/radius for depth projection, scroll outward with time
+        vec2 nebulaUV = vec2(angle * 2.0, 1.0 / radius - t * 0.5);
+        float nebulaNoise = fbm(nebulaUV * 1.5 + fbm(nebulaUV * 0.8));
+        
+        // Interstellar Palette: Deep Crimson to Cyan/Teal
+        vec3 nebulaColor1 = vec3(0.15, 0.02, 0.2); // Deep Magenta/Purple
+        vec3 nebulaColor2 = vec3(0.05, 0.3, 0.4);  // Deep Teal
+        vec3 nebulaColor = mix(nebulaColor1, nebulaColor2, sin(angle + t) * 0.5 + 0.5);
+        vec3 bgNebula = nebulaColor * nebulaNoise * (radius * 1.5); 
+
+        // 4. Warp Streaks Layer (Flowing light particles)
+        float sectors = 90.0;
+        float sectorId = floor(angle * sectors / 6.28318);
+        
+        float rand = hash(vec2(sectorId, 14.37));
+        
+        float streaks = 0.0;
+        vec3 streakColor = vec3(0.0);
+        
+        // Only generate particles in some sectors
+        if (rand > 0.25) {
+            float speed = 2.5 + iFade * 5.0; // Speed up greatly on exit
+            float zProgress = fract(rand * 10.0 - t * speed); 
+            
+            // Perspective projection (1/Z)
+            float particleRadius = 0.02 / (zProgress + 0.01);
+            float distToParticle = abs(radius - particleRadius);
+            
+            float angleDist = fract(angle * sectors / 6.28318) - 0.5;
+            
+            // Calculate intensity based on radial stretch and angular deviation
+            float streakIntensity = smoothstep(0.4, 0.0, distToParticle * 2.0) * 
+                                    smoothstep(0.5, 0.0, abs(angleDist) * (radius * 15.0));
+            
+            // Streak Colors: Ice Blue, Crimson, Gold
+            vec3 col1 = vec3(0.7, 0.9, 1.0); // Ice blue/White
+            vec3 col2 = vec3(0.9, 0.1, 0.3); // Crimson
+            vec3 col3 = vec3(1.0, 0.8, 0.4); // Gold
+            
+            vec3 pCol = mix(col1, col2, sin(rand * 6.28) * 0.5 + 0.5);
+            pCol = mix(pCol, col3, zProgress); 
+            
+            streaks += streakIntensity * (1.0 - zProgress); 
+            streakColor += pCol * streaks;
+        }
+
+        // 5. Final Mix (Nebula + Streaks + Central Glow)
+        vec3 finalColor = bgNebula + streakColor * 1.8;
+        
+        // Central burst of white light (Gargantua throat)
+        finalColor += vec3(1.0, 0.95, 0.9) * (0.015 / (radius + 0.01));
+
+        gl_FragColor = vec4(finalColor, 1.0);
+    }
+  `;
+
+  // --- Compile Shaders ---
+  function createShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+  const program = gl.createProgram();
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
   
-  // Interstellar Tunnel Geometry Parameters
-  const TUNNEL_RADIUS = 250; 
-  const MAX_DEPTH = 2500;
-  
-  // Hyperspace Speeds
-  let baseSpeed = 15;
-  let warpSpeed = 0;
-  
-  // Cinematic Interstellar Poster Palette
-  const colors = [
-    [255, 255, 255], // Pure White (Superhot plasma)
-    [150, 230, 255], // Ice Blue / Cyan
-    [20,  120, 180], // Deep Teal
-    [220, 20,  60],  // Crimson / Magenta
-    [255, 100, 120], // Soft Red / Pink
-    [255, 200, 100]  // Bright Gold / Dust
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
+    return;
+  }
+  gl.useProgram(program);
+
+  // --- Buffer Data (Full screen quad) ---
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  // Two triangles forming a rectangle covering the screen
+  const positions = [
+    -1.0, -1.0,
+     1.0, -1.0,
+    -1.0,  1.0,
+    -1.0,  1.0,
+     1.0, -1.0,
+     1.0,  1.0,
   ];
-  
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+  const positionLocation = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  // --- Get Uniform Locations ---
+  const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
+  const iTimeLocation = gl.getUniformLocation(program, "iTime");
+  const iFadeLocation = gl.getUniformLocation(program, "iFade");
+
+  let w, h;
   function resize() {
     w = window.innerWidth;
     h = window.innerHeight;
     canvas.width = w;
     canvas.height = h;
+    gl.viewport(0, 0, w, h);
   }
-  
   window.addEventListener('resize', resize);
   resize();
-  
-  class Particle {
-    constructor() {
-      this.init(true);
-    }
-    
-    init(randomZ = false) {
-      this.angle = Math.random() * Math.PI * 2;
-      
-      // Spread particles radially to create a very thick, cloudy tunnel wall
-      let distribution = Math.random();
-      // Use square root distribution to cluster more particles near the inner surface
-      this.radiusOffset = (Math.sqrt(distribution) * 400) - 100; 
-      
-      this.z = randomZ ? Math.random() * MAX_DEPTH : MAX_DEPTH;
-      this.pz = this.z;
-      
-      const c = colors[Math.floor(Math.random() * colors.length)];
-      this.r = c[0];
-      this.g = c[1];
-      this.b = c[2];
-      
-      // Particle thickness
-      this.size = Math.random() * 2.5 + 0.5;
-    }
-    
-    update(speedMultiplier) {
-      this.pz = this.z;
-      this.z -= (baseSpeed + speedMultiplier);
-      
-      // When particle passes behind the camera, respawn it at the deep end of the tunnel
-      if (this.z <= 1) {
-        this.init();
-        this.z = MAX_DEPTH;
-        this.pz = this.z;
-      }
-    }
-    
-    draw(time, twist) {
-      // 1. Calculate dynamic radius with sine wave undulation (The Interstellar Throat ripple)
-      let currentR = TUNNEL_RADIUS + this.radiusOffset + Math.sin(this.z * 0.003 - time) * 150;
-      let prevR    = TUNNEL_RADIUS + this.radiusOffset + Math.sin(this.pz * 0.003 - time) * 150;
-      
-      // 2. Calculate Corkscrew Twist based on depth
-      let curAngle  = this.angle + this.z * twist;
-      let prevAngle = this.angle + this.pz * twist;
-      
-      // 3. 3D to 2D Cylindrical Projection
-      let x = w / 2 + (Math.cos(curAngle) * currentR * w) / this.z;
-      let y = h / 2 + (Math.sin(curAngle) * currentR * w) / this.z;
-      
-      let px = w / 2 + (Math.cos(prevAngle) * prevR * w) / this.pz;
-      let py = h / 2 + (Math.sin(prevAngle) * prevR * w) / this.pz;
-      
-      // Don't draw if both points are offscreen (performance optimization)
-      if ((x < 0 || x > w || y < 0 || y > h) && (px < 0 || px > w || py < 0 || py > h)) return;
-      
-      // 4. Depth fading (dark in the deep distance, bright near the camera)
-      let depthRatio = 1 - (this.z / MAX_DEPTH);
-      if (depthRatio < 0) depthRatio = 0;
-      
-      let opacity = Math.pow(depthRatio, 1.2);
-      
-      // 5. Size scaling (Perspective: things get bigger as they get closer)
-      let strokeSize = this.size * (w / this.z) * 0.6;
-      if (strokeSize > 40) strokeSize = 40; // Cap thickness to avoid massive blobs
-      
-      ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(x, y);
-      ctx.lineWidth = strokeSize;
-      ctx.strokeStyle = `rgba(${this.r}, ${this.g}, ${this.b}, ${opacity})`;
-      ctx.stroke();
-    }
-  }
-  
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    particles.push(new Particle());
-  }
-  
-  let animationFrame;
-  let phase = 0; 
+
+  // --- Animation Loop ---
   let startTime = Date.now();
-  let timeInWarp = 0;
-  let globalTime = 0;
-  let twistFactor = 0.003; // Initial strong corkscrew twist
+  let animationFrame;
+  let fadeState = 0.0; // Transitions from 0 to 1 when entering the site
   
-  function animate() {
-    globalTime += 0.04; // Controls the speed of the wall ripples
+  function render() {
+    let elapsed = (Date.now() - startTime) / 1000.0;
     
-    // Clear background with high alpha for smooth, thick glowing trails
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(2, 0, 5, 0.25)'; // Deep void color
-    ctx.fillRect(0, 0, w, h);
-    
-    // Additive blending creates intense, bright overlaps simulating superheated gas
-    ctx.globalCompositeOperation = 'lighter'; 
-    
-    let now = Date.now();
-    let elapsed = now - startTime;
-    
-    // Cinematic Sequence Phase Logic
-    if (phase === 0 && elapsed > 500) {
-        phase = 1; // Begin pulling into the wormhole
+    // Accelerate the visual speed smoothly when the preloader is exiting
+    if (window.preloaderExitSignal) {
+        fadeState += 0.015;
+        if (fadeState > 1.0) fadeState = 1.0;
     }
-    if (phase === 1) {
-        warpSpeed += (140 - warpSpeed) * 0.02; // Massive acceleration through the tube
-        twistFactor += (0.0005 - twistFactor) * 0.03; // Straighten the tunnel slightly as we speed up
-        if (warpSpeed > 120) {
-            phase = 2;
-            timeInWarp = now;
-        }
-    }
-    if (phase === 2 && (now - timeInWarp > 1500)) {
-        if (window.preloaderExitSignal) {
-            phase = 3; // Prepare to exit
-        }
-    }
-    if (phase === 3) {
-        warpSpeed *= 0.85; // Hard gravitational braking
-        twistFactor += 0.0008; // Twist dramatically increases as you drop out
-    }
-    
-    // Optional global rotation to make the entire tunnel spin
-    ctx.save();
-    ctx.translate(w/2, h/2);
-    ctx.rotate(Date.now() * 0.0004);
-    ctx.translate(-w/2, -h/2);
-    
-    particles.forEach(p => {
-      p.update(warpSpeed);
-      p.draw(globalTime, twistFactor);
-    });
-    
-    ctx.restore();
-    
-    // Draw the "Black Hole / Distant Destination" in the exact center
-    // This blocks out lines crossing the center, enforcing the hollow tunnel illusion
-    ctx.globalCompositeOperation = 'source-over';
-    let centerGlow = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w*0.12);
-    centerGlow.addColorStop(0, 'rgba(0, 0, 0, 1)');       // Pitch black throat center
-    centerGlow.addColorStop(0.4, 'rgba(0, 0, 0, 0.9)'); 
-    centerGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');       // Fades smoothly into the tunnel
-    ctx.fillStyle = centerGlow;
-    ctx.fillRect(0, 0, w, h);
-    
-    animationFrame = requestAnimationFrame(animate);
+
+    gl.uniform2f(iResolutionLocation, w, h);
+    gl.uniform1f(iTimeLocation, elapsed);
+    gl.uniform1f(iFadeLocation, fadeState);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    animationFrame = requestAnimationFrame(render);
   }
   
-  animate();
-  
-  const minDuration = 4500;
+  render();
+
+  // --- Exit Logic ---
+  const minDuration = 4500; // Minimum viewing time for the cinematic effect
   
   function endPreloader() {
-    window.preloaderExitSignal = true; 
+    window.preloaderExitSignal = true; // Triggers the hyper-acceleration shader effect
     
     const elapsed = Date.now() - startTime;
-    const remaining = Math.max(0, minDuration - Math.max(elapsed, 2500)); 
+    const remaining = Math.max(0, minDuration - elapsed);
     
     setTimeout(() => {
+      // Start CSS opacity fade
       preloader.style.opacity = '0';
       preloader.style.pointerEvents = 'none';
+      
+      // Cleanup after fade finishes
       setTimeout(() => {
         cancelAnimationFrame(animationFrame);
         preloader.remove();
-      }, 1500); // Wait for the 1.5s CSS transition to finish
+        
+        // Optional: Release WebGL context
+        const ext = gl.getExtension('WEBGL_lose_context');
+        if (ext) ext.loseContext();
+      }, 1500); // Wait for the 1.5s CSS transition
     }, remaining);
   }
   
