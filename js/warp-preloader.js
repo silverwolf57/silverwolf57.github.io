@@ -7,9 +7,20 @@
   
   let width, height;
   let stars = [];
-  const numStars = 800; // Increase for more particles
-  let speed = 2; // initial slow speed
-  let targetSpeed = 25; // warp speed
+  const numStars = 2500; // Increased density for wormhole effect
+  let speed = 0.2; // Start very slow
+  let targetSpeed = 45; // Max warp speed
+  
+  // Richer color palette (blues, golds, cyans, purples, pure whites)
+  const colors = [
+    'rgba(255, 255, 255,', // White
+    'rgba(200, 220, 255,', // Light blue
+    'rgba(150, 180, 255,', // Deeper blue
+    'rgba(255, 230, 180,', // Warm gold/yellow
+    'rgba(255, 200, 180,', // Slight pink/orange
+    'rgba(120, 255, 255,', // Cyan
+    'rgba(200, 150, 255,'  // Light purple
+  ];
   
   function resize() {
     width = window.innerWidth;
@@ -31,6 +42,8 @@
       this.y = (Math.random() - 0.5) * height * 2;
       this.z = initial ? Math.random() * width : width;
       this.pz = this.z;
+      // Assign random color
+      this.colorBase = colors[Math.floor(Math.random() * colors.length)];
     }
     
     update() {
@@ -49,11 +62,20 @@
       
       this.pz = this.z;
       
+      let opacity = 1 - (this.z / width);
+      if (opacity < 0) opacity = 0;
+      if (opacity > 1) opacity = 1;
+      
       ctx.beginPath();
       ctx.moveTo(px, py);
       ctx.lineTo(x, y);
-      ctx.strokeStyle = `rgba(180, 220, 255, ${1 - this.z / width})`; // Blue-ish white
-      ctx.lineWidth = Math.max(0.5, (1 - this.z / width) * 2.5); // Thicker as it gets closer
+      ctx.strokeStyle = `${this.colorBase} ${opacity})`; 
+      
+      // Simulate wormhole distortion (thicker at the edges)
+      let distFromCenter = Math.sqrt(Math.pow(x - width/2, 2) + Math.pow(y - height/2, 2));
+      let distortion = Math.min(distFromCenter / (width/2), 1.8);
+      
+      ctx.lineWidth = Math.max(0.2, opacity * 3 * distortion); 
       ctx.stroke();
     }
   }
@@ -64,17 +86,27 @@
   
   let animationFrame;
   function animate() {
-    ctx.fillStyle = 'rgba(0, 5, 15, 0.3)'; // Deep dark blue/black trail effect
+    // Lower alpha creates much longer trails, adding to the warp/wormhole effect
+    ctx.fillStyle = 'rgba(0, 1, 5, 0.15)'; 
     ctx.fillRect(0, 0, width, height);
+    
+    // Add a slight rotation to the canvas to simulate a spiraling wormhole
+    ctx.save();
+    ctx.translate(width/2, height/2);
+    // Rotate very slowly, speed influences rotation
+    ctx.rotate(Date.now() * 0.0001 + speed * 0.002); 
+    ctx.translate(-width/2, -height/2);
     
     stars.forEach(star => {
       star.update();
       star.draw();
     });
     
-    // Smoothly accelerate to target warp speed
+    ctx.restore();
+    
+    // Exponential-like acceleration for cinematic warp punch
     if (speed < targetSpeed) {
-      speed += 0.3;
+      speed += 0.03 + (speed * 0.03);
     }
     
     animationFrame = requestAnimationFrame(animate);
@@ -84,7 +116,7 @@
   
   // Fade out logic
   const startTime = Date.now();
-  const minDuration = 1800; // minimum 1.8 seconds of warp speed
+  const minDuration = 4000; // Increased to 4 seconds
   let isEnding = false;
   
   function endPreloader() {
@@ -95,16 +127,22 @@
     const remaining = Math.max(0, minDuration - elapsed);
     
     setTimeout(() => {
+      // Simulate dropping out of warp
+      let decelerate = setInterval(() => {
+        speed *= 0.85;
+        if (speed < 0.5) clearInterval(decelerate);
+      }, 50);
+      
       preloader.style.opacity = '0';
-      preloader.style.pointerEvents = 'none'; // allow clicking through immediately
+      preloader.style.pointerEvents = 'none'; 
+      
       setTimeout(() => {
         cancelAnimationFrame(animationFrame);
         preloader.remove();
-      }, 800); // Wait for transition to finish
+      }, 1200); // Smooth transition duration
     }, remaining);
   }
   
-  // Try to bind to Hexo/Pjax load event if possible, fallback to standard load
   if (document.readyState === 'complete') {
     endPreloader();
   } else {
