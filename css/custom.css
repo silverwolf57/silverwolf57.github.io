@@ -99,7 +99,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 1.5s ease-in-out;
 }
 #warp-canvas {
   width: 100%;
