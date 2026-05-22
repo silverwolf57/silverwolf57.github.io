@@ -45,15 +45,8 @@
       // Individual length multiplier to create varied streak lengths (like the image)
       this.lengthMult = Math.random() * 2.0 + 0.5;
       
-      // Assign a hue based on the Orion Nebula palette (Teal/Cyan, Magenta/Pink, Warm Orange)
-      let r = Math.random();
-      if (r < 0.4) {
-          this.hue = 180 + Math.random() * 40; // Teal / Cyan (180-220)
-      } else if (r < 0.8) {
-          this.hue = 320 + Math.random() * 40; // Magenta / Pink (320-360)
-      } else {
-          this.hue = 10 + Math.random() * 20;  // Warm Orange / Red (10-30) for stars like Betelgeuse
-      }
+      // Assign a fully random hue for color
+      this.hue = Math.floor(Math.random() * 360);
     }
     
     update() {
@@ -112,34 +105,17 @@
   let startTime = Date.now();
   let timeInWarp = 0;
   
-  // Orion Constellation Data
-  const orionStarsList = [
-      {id: 'betelgeuse', x: -0.15, y: -0.25, size: 6, color: '15, 100%, 75%', glow: 20}, // Top left (Red Supergiant)
-      {id: 'bellatrix', x: 0.1, y: -0.2, size: 4, color: '210, 100%, 85%', glow: 15}, // Top right
-      {id: 'alnitak', x: -0.06, y: -0.01, size: 3.5, color: '210, 100%, 90%', glow: 10}, // Belt left
-      {id: 'alnilam', x: 0, y: 0, size: 3.5, color: '210, 100%, 90%', glow: 10}, // Belt mid
-      {id: 'mintaka', x: 0.06, y: 0.01, size: 3.5, color: '210, 100%, 90%', glow: 10}, // Belt right
-      {id: 'saiph', x: -0.12, y: 0.25, size: 4, color: '210, 100%, 85%', glow: 15}, // Bottom left
-      {id: 'rigel', x: 0.15, y: 0.2, size: 7, color: '210, 100%, 95%', glow: 25}, // Bottom right (Blue Supergiant)
-      {id: 'meissa', x: -0.02, y: -0.35, size: 2.5, color: '210, 100%, 85%', glow: 8}, // Head
-      {id: 'sword1', x: -0.02, y: 0.08, size: 2, color: '330, 100%, 80%', glow: 15}, // Nebula region
-      {id: 'sword2', x: -0.03, y: 0.12, size: 2.5, color: '330, 100%, 80%', glow: 30}, // M42 Orion Nebula center
-      {id: 'sword3', x: -0.04, y: 0.16, size: 2, color: '330, 100%, 80%', glow: 15}
-  ];
-  const orionLinesList = [
-      ['betelgeuse', 'alnitak'],
-      ['bellatrix', 'mintaka'],
-      ['alnitak', 'alnilam'],
-      ['alnilam', 'mintaka'],
-      ['alnitak', 'saiph'],
-      ['mintaka', 'rigel'],
-      ['meissa', 'betelgeuse'],
-      ['meissa', 'bellatrix'],
-      ['alnilam', 'sword1'],
-      ['sword1', 'sword2'],
-      ['sword2', 'sword3']
-  ];
-  let orionAlpha = 0;
+  // Generate a random full-sky starfield
+  const bgStars = [];
+  for (let i = 0; i < 300; i++) {
+      bgStars.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.5 + 0.5
+      });
+  }
+  let bgStarAlpha = 0;
   
   function animate() {
     // Solid black clear every frame. NO fading trails. 
@@ -168,9 +144,9 @@
         speed *= 0.88; // Decelerate on exit
         if (speed < 0.1) speed = 0.1;
         
-        // Fade in Orion Map
-        orionAlpha += 0.015;
-        if (orionAlpha > 1) orionAlpha = 1;
+        // Fade in Background Stars
+        bgStarAlpha += 0.015;
+        if (bgStarAlpha > 1) bgStarAlpha = 1;
     }
     
     stars.forEach(star => {
@@ -178,51 +154,14 @@
       star.draw();
     });
     
-    // Draw Orion Constellation Map
-    if (orionAlpha > 0) {
-        let minDim = Math.min(w, h);
-        
-        // Draw Lines
-        ctx.lineWidth = 1;
-        orionLinesList.forEach(pair => {
-            let s1 = orionStarsList.find(s => s.id === pair[0]);
-            let s2 = orionStarsList.find(s => s.id === pair[1]);
-            if(s1 && s2) {
-                ctx.beginPath();
-                ctx.moveTo(w/2 + s1.x * minDim, h/2 + s1.y * minDim);
-                ctx.lineTo(w/2 + s2.x * minDim, h/2 + s2.y * minDim);
-                ctx.strokeStyle = `rgba(100, 150, 255, ${orionAlpha * 0.4})`;
-                ctx.stroke();
-            }
-        });
-        
-        // Draw Stars and Nebula Glows
-        orionStarsList.forEach(s => {
-            let sx = w/2 + s.x * minDim;
-            let sy = h/2 + s.y * minDim;
-            
-            // Glow
-            let gradient = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.glow);
-            gradient.addColorStop(0, `hsla(${s.color}, ${orionAlpha})`);
-            gradient.addColorStop(1, `hsla(${s.color}, 0)`);
-            ctx.fillStyle = gradient;
+    // Draw Background Starfield
+    if (bgStarAlpha > 0) {
+        bgStars.forEach(s => {
+            ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha * bgStarAlpha})`;
             ctx.beginPath();
-            ctx.arc(sx, sy, s.glow, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Core
-            ctx.fillStyle = `hsla(0, 100%, 100%, ${orionAlpha})`;
-            ctx.beginPath();
-            ctx.arc(sx, sy, s.size, 0, Math.PI * 2);
+            ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
             ctx.fill();
         });
-        
-        // Label
-        ctx.fillStyle = `rgba(255, 255, 255, ${orionAlpha * 0.7})`;
-        ctx.font = '16px "Orbitron", sans-serif, monospace';
-        ctx.textAlign = 'center';
-        ctx.letterSpacing = '4px';
-        ctx.fillText('ORION NEBULA', w/2, h/2 + 0.35 * minDim);
     }
     
     animationFrame = requestAnimationFrame(animate);
@@ -237,7 +176,7 @@
     const remaining = Math.max(0, minDuration - Math.max(elapsed, 2500)); 
     
     setTimeout(() => {
-      // Trigger phase 3 (brake and show Orion Map)
+      // Trigger phase 3 (brake and show Background Stars)
       window.preloaderExitSignal = true; 
       
       // Allow 3.5 seconds to admire the star map before fading out
