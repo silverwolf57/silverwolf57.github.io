@@ -45,8 +45,25 @@
       // Individual length multiplier to create varied streak lengths (like the image)
       this.lengthMult = Math.random() * 2.0 + 0.5;
       
-      // Assign a fully random hue for color
-      this.hue = Math.floor(Math.random() * 360);
+      // Assign realistic star colors (O, B, A, F, G, K, M classifications roughly)
+      let r = Math.random();
+      if (r < 0.4) {
+          // Blue/White (Hot stars)
+          this.hue = 210 + Math.random() * 30; // 210-240
+          this.sat = 40 + Math.random() * 40; // 40-80%
+      } else if (r < 0.7) {
+          // Pure White
+          this.hue = 0;
+          this.sat = 0; // 0%
+      } else if (r < 0.85) {
+          // Yellow/White (Sun-like)
+          this.hue = 40 + Math.random() * 20; // 40-60
+          this.sat = 30 + Math.random() * 30; // 30-60%
+      } else {
+          // Orange/Red (Cool stars)
+          this.hue = 10 + Math.random() * 20; // 10-30
+          this.sat = 60 + Math.random() * 30; // 60-90%
+      }
     }
     
     update() {
@@ -89,8 +106,8 @@
       ctx.moveTo(tailX, tailY);
       ctx.lineTo(headX, headY);
       ctx.lineWidth = lineWidth;
-      // Use HSL for vibrant colors. Fades to black in distance (0%), vibrant in mid (50%), white when close (100%)
-      ctx.strokeStyle = `hsl(${this.hue}, 90%, ${brightness * 100}%)`;
+      // Use HSL for realistic colors. Fades to black in distance (0%), vibrant in mid (50%), white when close (100%)
+      ctx.strokeStyle = `hsl(${this.hue}, ${this.sat}%, ${brightness * 100}%)`;
       ctx.lineCap = 'round'; // Makes the ends of the streaks smooth
       ctx.stroke();
     }
