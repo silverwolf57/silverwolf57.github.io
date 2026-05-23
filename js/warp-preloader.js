@@ -186,7 +186,7 @@
   
   animate();
   
-  const minDuration = 6000; // Time in hyperspace
+  const minDuration = 5000; // 5 seconds in hyperspace
   
   function endPreloader() {
     const elapsed = Date.now() - startTime;
@@ -196,7 +196,7 @@
       // Trigger phase 3 (brake and show Background Stars)
       window.preloaderExitSignal = true; 
       
-      // Allow 3.5 seconds to admire the star map before fading out
+      // Allow 2 seconds to admire the star map before fading out
       setTimeout(() => {
           preloader.style.opacity = '0';
           preloader.style.pointerEvents = 'none';
@@ -204,7 +204,7 @@
             cancelAnimationFrame(animationFrame);
             preloader.remove();
           }, 1500); // 1.5s CSS transition fade out
-      }, 3500);
+      }, 2000);
     }, remaining);
   }
   
