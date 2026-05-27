@@ -2,6 +2,12 @@
   const preloader = document.getElementById('warp-preloader');
   if (!preloader) return;
 
+  if (sessionStorage.getItem('warpPreloaderSeen')) {
+    preloader.remove();
+    return;
+  }
+  sessionStorage.setItem('warpPreloaderSeen', 'true');
+
   let canvas = document.getElementById('warp-canvas');
   
   // Since we might have a WebGL context from previous versions, recreate the canvas to ensure a clean 2D context

@@ -106,4 +106,7 @@
   height: 100%;
   display: block;
 }
+html.skip-preloader #warp-preloader {
+  display: none !important;
+}
 
