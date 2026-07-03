@@ -1,0 +1,112 @@
+/* Yun Style Social Icons for Butterfly */
+#aside-content .card-info-social-icons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 10px 0;
+}
+
+#aside-content .card-info-social-icons .social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    border-radius: 50%;
+    background: var(--card-bg);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease-in-out;
+}
+
+[data-theme='dark'] #aside-content .card-info-social-icons .social-icon {
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+}
+
+#aside-content .card-info-social-icons .social-icon:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='dark'] #aside-content .card-info-social-icons .social-icon:hover {
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+#aside-content .card-info-social-icons .social-icon i {
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    font-size: 1.4em;
+}
+
+#aside-content .card-info-social-icons .social-icon:hover i {
+    transform: rotate(360deg);
+}
+
+/* Custom Image Icons for Netease and CSDN */
+.card-info-social-icons .fa-music::before,
+.card-info-social-icons .fa-code::before,
+.card-info-social-icons .wechat-oa::before,
+#site_social_icons .fa-music::before,
+#site_social_icons .fa-code::before,
+#site_social_icons .wechat-oa::before {
+    content: "" !important;
+    display: inline-block !important;
+    width: 1.2em !important;
+    height: 1.2em !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    vertical-align: middle !important;
+}
+.card-info-social-icons .fa-music::before,
+#site_social_icons .fa-music::before {
+    background-image: url('/img/netease.png') !important;
+}
+.card-info-social-icons .fa-code::before,
+#site_social_icons .fa-code::before {
+    background-image: url('/img/csdn.png') !important;
+}
+.card-info-social-icons .wechat-oa::before,
+#site_social_icons .wechat-oa::before {
+    background-image: url('/img/oa_icon.png') !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(73, 177, 245, 0.6);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(73, 177, 245, 1);
+}
+
+/* Warp Speed Preloader */
+#warp-preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1.5s ease-in-out;
+}
+#warp-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+html.skip-preloader #warp-preloader {
+  display: none !important;
+}
+

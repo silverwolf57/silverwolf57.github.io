@@ -1,0 +1,368 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>leetcode0066. 加一题解 | OrBit</title><meta name="author" content="orion"><meta name="copyright" content="orion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="66. 加一题目描述给定一个表示大整数的整数数组 digits，其中 digits[i] 是整数的第 i 位数字。这些数字按从左到右，从最高位到最低位排列。这个大整数不包含任何前导 0。 将大整数加 1，并返回结果的数字数组。 示例 示例 1： 输入： digits &#x3D; [1,2,3] 输出： [1,2,4] 解释： 输入数组表示数字 123。加 1 后得到 $123 + 1 &#x3D; 124$。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="leetcode0066. 加一题解">
+<meta property="og:url" content="https://silverwolf57.github.io/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/index.html">
+<meta property="og:site_name" content="OrBit">
+<meta property="og:description" content="66. 加一题目描述给定一个表示大整数的整数数组 digits，其中 digits[i] 是整数的第 i 位数字。这些数字按从左到右，从最高位到最低位排列。这个大整数不包含任何前导 0。 将大整数加 1，并返回结果的数字数组。 示例 示例 1： 输入： digits &#x3D; [1,2,3] 输出： [1,2,4] 解释： 输入数组表示数字 123。加 1 后得到 $123 + 1 &#x3D; 124$。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://silverwolf57.github.io/img/head.jpg">
+<meta property="article:published_time" content="2026-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-01T13:54:42.104Z">
+<meta property="article:author" content="orion">
+<meta property="article:tag" content="编程题解">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://silverwolf57.github.io/img/head.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "leetcode0066. 加一题解",
+  "url": "https://silverwolf57.github.io/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/",
+  "image": "https://silverwolf57.github.io/img/head.jpg",
+  "datePublished": "2026-06-30T16:00:00.000Z",
+  "dateModified": "2026-07-01T13:54:42.104Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "orion",
+      "url": "https://silverwolf57.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://silverwolf57.github.io/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="LnOxZpIW5fqWNDWnxPcB_OH0h0FLvmX-NvGd9o6vaSg"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'leetcode0066. 加一题解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><script>if(sessionStorage.getItem("warpPreloaderSeen")){document.documentElement.classList.add("skip-preloader");}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="bg-animation" id="web_bg" style="background-image: url(/img/background.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">OrBit</span></a><a class="nav-page-title" href="/"><span class="site-name">leetcode0066. 加一题解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 時間軸</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 標籤</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分類</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 關於</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">leetcode0066. 加一题解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-06-30T16:00:00.000Z" title="Created 2026-07-01 00:00:00">2026-07-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-07-01T13:54:42.104Z" title="Updated 2026-07-01 21:54:42">2026-07-01</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="66-加一"><a href="#66-加一" class="headerlink" title="66. 加一"></a>66. 加一</h1><h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>给定一个表示大整数的整数数组 <code>digits</code>，其中 <code>digits[i]</code> 是整数的第 <code>i</code> 位数字。这些数字按从左到右，从最高位到最低位排列。这个大整数不包含任何前导 0。</p>
+<p>将大整数加 1，并返回结果的数字数组。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ul>
+<li><strong>示例 1：</strong><ul>
+<li><strong>输入：</strong> <code>digits = [1,2,3]</code></li>
+<li><strong>输出：</strong> <code>[1,2,4]</code></li>
+<li><strong>解释：</strong> 输入数组表示数字 123。加 1 后得到 $123 + 1 = 124$。</li>
+</ul>
+</li>
+<li><strong>示例 2：</strong><ul>
+<li><strong>输入：</strong> <code>digits = [4,3,2,1]</code></li>
+<li><strong>输出：</strong> <code>[4,3,2,2]</code></li>
+<li><strong>解释：</strong> 输入数组表示数字 4321。加 1 后得到 $4321 + 1 = 4322$。</li>
+</ul>
+</li>
+<li><strong>示例 3：</strong><ul>
+<li><strong>输入：</strong> <code>digits = [9]</code></li>
+<li><strong>输出：</strong> <code>[1,0]</code></li>
+<li><strong>解释：</strong> 输入数组表示数字 9。加 1 得到了 $9 + 1 = 10$。</li>
+</ul>
+</li>
+</ul>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><ul>
+<li>$1 \le \text{digits.length} \le 100$</li>
+<li>$0 \le \text{digits}[i] \le 9$</li>
+<li><code>digits</code> 不包含任何前导 0</li>
+</ul>
+<h2 id="思路一：模拟高精度加法"><a href="#思路一：模拟高精度加法" class="headerlink" title="思路一：模拟高精度加法"></a>思路一：模拟高精度加法</h2><h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><p>模拟手工竖式进位加法，从最低位开始 +1，逐位计算本位、更新进位，结果逆序存入临时数组，遍历结束若还有进位则补充，最后反转数组得到答案。</p>
+<h3 id="C-代码"><a href="#C-代码" class="headerlink" title="C++ 代码"></a>C++ 代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution1</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">plusOne</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; digits)</span> </span>&#123;</span><br><span class="line">          vector&lt;<span class="type">int</span>&gt; res;</span><br><span class="line">          <span class="type">int</span> carry=<span class="number">0</span>;</span><br><span class="line">          <span class="keyword">for</span>(<span class="type">int</span> i=digits.<span class="built_in">size</span>()<span class="number">-1</span>;i&gt;=<span class="number">0</span>;--i)&#123;</span><br><span class="line">              <span class="keyword">if</span>(i==digits.<span class="built_in">size</span>()<span class="number">-1</span>)&#123;</span><br><span class="line">                digits[i]+=<span class="number">1</span>;</span><br><span class="line">                carry+=digits[i];</span><br><span class="line">                res.<span class="built_in">push_back</span>(carry%<span class="number">10</span>);</span><br><span class="line">                carry/=<span class="number">10</span>;</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">else</span>&#123;</span><br><span class="line">                carry+=digits[i];</span><br><span class="line">                res.<span class="built_in">push_back</span>(carry%<span class="number">10</span>);</span><br><span class="line">                carry/=<span class="number">10</span>;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">if</span>(carry)res.<span class="built_in">push_back</span>(carry);</span><br><span class="line">          <span class="built_in">reverse</span>(res.<span class="built_in">begin</span>(),res.<span class="built_in">end</span>());</span><br><span class="line">          <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>设数组长度为 $n$。</p>
+<ul>
+<li><strong>时间复杂度：</strong> $O(n)$<br>  遍历一遍数组 $O(n)$，反转数组也是 $O(n)$，总线性复杂度。</li>
+<li><strong>空间复杂度：</strong> $O(n)$<br>  额外开辟 <code>res</code> 数组存储结果，最坏长度 $n+1$；若不算返回数组空间，额外辅助变量仅常数 $O(1)$。</li>
+</ul>
+<h2 id="思路二：找第一个非-9-数字优化（最优常规解法）"><a href="#思路二：找第一个非-9-数字优化（最优常规解法）" class="headerlink" title="思路二：找第一个非 9 数字优化（最优常规解法）"></a>思路二：找第一个非 9 数字优化（最优常规解法）</h2><h3 id="核心思想-1"><a href="#核心思想-1" class="headerlink" title="核心思想"></a>核心思想</h3><p>逆序遍历：</p>
+<ol>
+<li><strong>当前位不等于 9：</strong> 本位 +1，直接返回原数组；</li>
+<li><strong>当前位等于 9：</strong> 本位置 0，继续向前进位；</li>
+<li><strong>遍历完所有位全为 9：</strong> 数组扩容一位，首位赋值为 1。</li>
+</ol>
+<h3 id="C-代码-1"><a href="#C-代码-1" class="headerlink" title="C++ 代码"></a>C++ 代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">plusOne</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; digits)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=digits.<span class="built_in">size</span>()<span class="number">-1</span>;i&gt;=<span class="number">0</span>;--i)&#123;</span><br><span class="line">            <span class="keyword">if</span>(digits[i]!=<span class="number">9</span>)&#123;</span><br><span class="line">                digits[i]+=<span class="number">1</span>;</span><br><span class="line">                <span class="keyword">return</span> digits;</span><br><span class="line">            &#125;<span class="comment">//不为9就直接返回</span></span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                digits[i]=<span class="number">0</span>;</span><br><span class="line">            &#125;<span class="comment">//其他的变为0</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">res</span><span class="params">(digits.size(),<span class="number">0</span>)</span></span>;</span><br><span class="line">        res.<span class="built_in">insert</span>(res.<span class="built_in">begin</span>(),<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Python-代码"><a href="#Python-代码" class="headerlink" title="Python 代码"></a>Python 代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">plusOne</span>(<span class="params">self, digits</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type digits: List[int]</span></span><br><span class="line"><span class="string">        :rtype: List[int]</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(digits)-<span class="number">1</span>,-<span class="number">1</span>,-<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> digits[i] !=<span class="number">9</span>:</span><br><span class="line">                digits[i]+=<span class="number">1</span></span><br><span class="line">                <span class="keyword">return</span> digits</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                digits[i]=<span class="number">0</span></span><br><span class="line">        digits.append(<span class="number">0</span>)</span><br><span class="line">        digits[<span class="number">0</span>]=<span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> digits</span><br></pre></td></tr></table></figure>
+<h3 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>设数组长度为 $n$。</p>
+<ul>
+<li><strong>时间复杂度：</strong> $O(n)$<br>  最坏情况（全部是 9）需要完整遍历整个数组；平均情况大概率中途提前返回，实际效率最高。</li>
+<li><strong>空间复杂度：</strong> $O(1)$（最优）<br>  直接原地修改原数组；只有全 9 特例才新建数组，不计返回存储空间时，额外空间为常数级别。</li>
+</ul>
+<h2 id="思路三：Python-类型转换极简写法"><a href="#思路三：Python-类型转换极简写法" class="headerlink" title="思路三：Python 类型转换极简写法"></a>思路三：Python 类型转换极简写法</h2><h3 id="核心思想-2"><a href="#核心思想-2" class="headerlink" title="核心思想"></a>核心思想</h3><p>利用 Python 支持超大整数的特性，完成转换链：<br>数字列表 $\rightarrow$ 字符串拼接 $\rightarrow$ 整数 +1 $\rightarrow$ 转字符串 $\rightarrow$ 转回数字列表。</p>
+<h3 id="Python-代码-1"><a href="#Python-代码-1" class="headerlink" title="Python 代码"></a>Python 代码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plusOne1</span>(<span class="params">self, digits</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    :type digits: List[int]</span></span><br><span class="line"><span class="string">    :rtype: List[int]</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span>(<span class="built_in">map</span>(<span class="built_in">int</span>, <span class="built_in">list</span>(<span class="built_in">str</span>(<span class="built_in">int</span>(<span class="string">&quot;&quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,digits)))+<span class="number">1</span>))))</span><br></pre></td></tr></table></figure>
+<h3 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>设数组长度为 $n$。</p>
+<ul>
+<li><strong>时间复杂度：</strong> $O(n)$<br>  多次遍历转换：列表转字符串、字符串转整数、数字再转回字符串、再转回列表，每一步都是线性 $O(n)$。</li>
+<li><strong>空间复杂度：</strong> $O(n)$<br>  需要额外字符串、中间整数、结果列表占用线性空间；</li>
+</ul>
+<blockquote>
+<p><strong>局限性：</strong> 题目数组最长可达 100 位，绝大多数编程语言（C++/Java）原生整型存不下，该写法仅 Python 可用，通用性差。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://silverwolf57.github.io">orion</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://silverwolf57.github.io/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/">https://silverwolf57.github.io/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%BC%96%E7%A8%8B%E9%A2%98%E8%A7%A3/">编程题解</a></div><div class="post-share"><div class="social-share" data-image="/img/head.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>If you find the content useful,a small tip would be greatly appreciated and help support more creations!</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/missing-semester-shell/" title="Missing semester course1:course overview and introduction to shell"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">Missing semester course1:course overview and introduction to shell</div></div><div class="info-2"><div class="info-item-1">本文是让ai在我关于MIT missing semester课程第一课的笔记上进行更改和润色而写成的，内容完整覆盖了第一课视频中所讲的所有内容。 一、Shell 环境分类（不同系统默认解释器）Shell 本质是命令行解释器，接收用户输入指令并传递给操作系统内核执行，不同操作系统默认 Shell 不一样：  Linux 系统：绝大多数发行版默认使用 Bash（Bourne Again Shell），兼容性最强，学习主流选择 macOS 系统：新版 macOS 默认是 Zsh（Z Shell）；旧版 macOS 预装 Bash，语法绝大部分和 Bash 通用 Windows 系统：原生终端为 PowerShell，语法、命令参数和 Bash 差异极大，不适合直接学习 Linux Shell   [!重要建议]若你使用 Windows 系统学习 Shell，强烈推荐安装 WSL（适用于 Linux 的 Windows 子系统），可以在 Windows 内部运行完整 Linux 环境，命令、语法和原生 Linux 完全一致微软官方安装文档（中文）：https://learn.micros...</div></div></div></a><a class="pagination-related" href="/2026/01/27/Hexo-Githubpages-blog-%E6%90%AD%E5%BB%BA%E6%95%99%E7%A8%8B/" title="Hexo-Githubpages blog 搭建教程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">Hexo-Githubpages blog 搭建教程</div></div><div class="info-2"><div class="info-item-1">Hexo + GitHub Pages 个人博客搭建教程1. 环境准备 Node.js: 运行环境。  Git: 代码提交工具。  GitHub 账号: 用于托管静态页面。   2. 安装与初始化在 PowerShell 中操作时，建议使用管理员身份运行以避免权限问题。 PowerShell 12345678910111213# 1. 全局安装 Hexo 命令行工具npm install -g hexo-cli# 2. 创建并进入博客目录（避开盘符根目录以防 EPERM 报错）mkdir E:\BlogProjectcd E:\BlogProject# 3. 初始化博客（若网络不佳，建议使用 npx 强制启动）npx hexo init Myblogcd Myblog# 4. 安装依赖npm install 3. 本地预览PowerShell 1npx hexo s 访问 http://localhost:4000 即可看到初始页面。 4. 关联 GitHub 仓库 在 GitHub 上新建仓库，推荐命名为 用户名.github.io。  修改根目录下的 _config.yml ...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> Comments</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/head.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">orion</div><div class="author-info-description">OrBit - Orion的個人空間 | 探索技術與生活的宇宙</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/silverwolf57"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/silverwolf57" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:me@example.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a><a class="social-icon" href="https://twitter.com/" target="_blank" title="Twitter"><i class="fab fa-twitter" style="color: #00a1d6;"></i></a><a class="social-icon" href="https://music.163.com/" target="_blank" title="網易雲音樂"><i class="fas fa-music" style="color: #e60026;"></i></a><a class="social-icon" href="https://space.bilibili.com/" target="_blank" title="嗶哩嗶哩"><i class="fab fa-bilibili" style="color: #fb7299;"></i></a><a class="social-icon" href="tencent://message/?uin=您的QQ號碼" target="_blank" title="QQ"><i class="fab fa-qq" style="color: #12B7F5;"></i></a><a class="social-icon" href="/img/wechat.jpg" target="_blank" title="微信"><i class="fab fa-weixin" style="color: #1AAD19;"></i></a><a class="social-icon" href="/img/wechat_official.png" target="_blank" title="微信公衆號"><i class="fab fa-weixin wechat-oa" style="color: #1AAD19;"></i></a><a class="social-icon" href="https://blog.csdn.net/" target="_blank" title="CSDN"><i class="fas fa-code" style="color: #FC5531;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is a place to record some thoughts</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#66-%E5%8A%A0%E4%B8%80"><span class="toc-number">1.</span> <span class="toc-text">66. 加一</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">题目描述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA"><span class="toc-number">1.1.2.</span> <span class="toc-text">提示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%80%EF%BC%9A%E6%A8%A1%E6%8B%9F%E9%AB%98%E7%B2%BE%E5%BA%A6%E5%8A%A0%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text">思路一：模拟高精度加法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-number">1.2.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E4%BB%A3%E7%A0%81"><span class="toc-number">1.2.2.</span> <span class="toc-text">C++ 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="toc-number">1.2.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C%EF%BC%9A%E6%89%BE%E7%AC%AC%E4%B8%80%E4%B8%AA%E9%9D%9E-9-%E6%95%B0%E5%AD%97%E4%BC%98%E5%8C%96%EF%BC%88%E6%9C%80%E4%BC%98%E5%B8%B8%E8%A7%84%E8%A7%A3%E6%B3%95%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">思路二：找第一个非 9 数字优化（最优常规解法）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-1"><span class="toc-number">1.3.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E4%BB%A3%E7%A0%81-1"><span class="toc-number">1.3.2.</span> <span class="toc-text">C++ 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python-%E4%BB%A3%E7%A0%81"><span class="toc-number">1.3.3.</span> <span class="toc-text">Python 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-1"><span class="toc-number">1.3.4.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%89%EF%BC%9APython-%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%9E%81%E7%AE%80%E5%86%99%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">思路三：Python 类型转换极简写法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3-2"><span class="toc-number">1.4.1.</span> <span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python-%E4%BB%A3%E7%A0%81-1"><span class="toc-number">1.4.2.</span> <span class="toc-text">Python 代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90-2"><span class="toc-number">1.4.3.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/missing-semester-shell/" title="Missing semester course1:course overview and introduction to shell">Missing semester course1:course overview and introduction to shell</a><time datetime="2026-07-01T16:00:00.000Z" title="Created 2026-07-02 00:00:00">2026-07-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/01/leetcode0066%E5%8A%A0%E4%B8%80/" title="leetcode0066. 加一题解">leetcode0066. 加一题解</a><time datetime="2026-06-30T16:00:00.000Z" title="Created 2026-07-01 00:00:00">2026-07-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/01/27/Hexo-Githubpages-blog-%E6%90%AD%E5%BB%BA%E6%95%99%E7%A8%8B/" title="Hexo-Githubpages blog 搭建教程">Hexo-Githubpages blog 搭建教程</a><time datetime="2026-01-27T13:20:41.000Z" title="Created 2026-01-27 21:20:41">2026-01-27</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By orion</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="Scroll to Comments"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'silverwolf57/silverwolf57.github.io',
+      'data-repo-id': 'R_kgDORB_D0g',
+      'data-category-id': 'DIC_kwDORB_D0s4C1eS7',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><div id="warp-preloader"><canvas id="warp-canvas"></canvas></div><script src="/js/warp-preloader.js"></script><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/fireworks.min.js"></script><script id="canvas_nest" defer="defer" color="255,255,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
